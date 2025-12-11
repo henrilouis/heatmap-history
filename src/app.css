@@ -1,0 +1,225 @@
+:root {
+  color-scheme: light dark;
+
+  --hue: 290;
+  --color: oklch(50% 0.1 var(--hue));
+  --neutral: oklch(0% 0% var(--hue));
+
+  --fg-primary: light-dark(
+    oklch(from var(--neutral) 5% c h),
+    oklch(from var(--neutral) 95% c h)
+  );
+  --fg-secondary: light-dark(
+    oklch(from var(--neutral) 35% c h),
+    oklch(from var(--neutral) 65% c h)
+  );
+  --fg-on-primary: light-dark(
+    oklch(from var(--neutral) 90% c h),
+    oklch(from var(--neutral) 10% c h)
+  );
+
+  --bg-primary: light-dark(
+    oklch(from var(--neutral) 100% c h),
+    oklch(from var(--neutral) 30% c h)
+  );
+  --bg-secondary: light-dark(
+    oklch(from var(--neutral) 95% c h),
+    oklch(from var(--neutral) 20% c h)
+  );
+
+  --el-bg-default: light-dark(
+    oklch(from var(--neutral) 50% c h / 0.15),
+    oklch(from var(--neutral) 50% c h / 0.3)
+  );
+  --el-bg-hover: light-dark(
+    oklch(from var(--neutral) 30% c h / 0.15),
+    oklch(from var(--neutral) 60% c h / 0.3)
+  );
+  --el-bg-primary: light-dark(
+    oklch(from var(--neutral) 0% c h),
+    oklch(from var(--neutral) 90% c h)
+  );
+
+  --el-border-color-default: light-dark(
+    oklch(from var(--neutral) 80% c h),
+    oklch(from var(--neutral) 40% c h)
+  );
+  --el-border-color-hover: light-dark(
+    oklch(from var(--neutral) 70% c h),
+    oklch(from var(--neutral) 50% c h)
+  );
+  --el-border-width: 0.0625rem;
+  --el-border-radius: 999rem;
+  --el-corner-shape: squircle;
+
+  --el-outline-color-selected: light-dark(
+    oklch(from var(--neutral) 5% c h),
+    oklch(from var(--neutral) 95% c h)
+  );
+  --el-outline-width-selected: 0.125rem;
+  --el-box-shadow-selected: 0 0 0.75rem
+    light-dark(
+      oklch(from var(--neutral) 5% c h),
+      oklch(from var(--neutral) 95% c h)
+    );
+
+  --el-padding: 0.5rem 0.75rem;
+
+  --el-focus-outline-color: light-dark(
+    oklch(from var(--neutral) 20% c h),
+    oklch(from var(--neutral) 80% c h)
+  );
+  --el-focus-outline-width: 0.125rem;
+  --el-focus-outline-offset: 0.0625rem;
+
+  --field-bg-default: light-dark(
+    oklch(from var(--neutral) 100% c h),
+    oklch(from var(--neutral) 30% c h)
+  );
+  --field-bg-hover: light-dark(
+    oklch(from var(--neutral) 100% c h),
+    oklch(from var(--neutral) 32% c h)
+  );
+
+  --heatmap-color-0: light-dark(
+    oklch(from var(--neutral) 100% c h),
+    oklch(from var(--neutral) 25% c h)
+  );
+  --heatmap-color-1: light-dark(
+    oklch(from var(--neutral) 90% c h),
+    oklch(from var(--neutral) 40% c h)
+  );
+  --heatmap-color-2: light-dark(
+    oklch(from var(--neutral) 70% c h),
+    oklch(from var(--neutral) 60% c h)
+  );
+  --heatmap-color-3: light-dark(
+    oklch(from var(--neutral) 50% c h),
+    oklch(from var(--neutral) 80% c h)
+  );
+  --heatmap-color-4: light-dark(
+    oklch(from var(--neutral) 30% c h),
+    oklch(from var(--neutral) 100% c h)
+  );
+
+  --cn-border-radius: 1rem;
+  --shadow-1: 0 0.25rem 0.5rem
+    light-dark(oklch(0% 0 0 / 0.1), oklch(0% 0 0 / 0.3));
+
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color: var(--fg-primary);
+  background-color: var(--bg-primary);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  min-height: 100dvh;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg-secondary);
+  display: grid;
+  grid-template-rows: auto 1fr;
+  font-size: 16px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-block-start: 0;
+  font-weight: 600;
+  color: var(--fg-primary);
+}
+
+ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.text-primary {
+  color: var(--fg-primary);
+}
+
+.text-secondary {
+  color: var(--fg-secondary);
+}
+
+.card {
+  background-color: var(--bg-primary);
+  border-radius: var(--cn-border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-1);
+}
+
+.skeleton {
+  background-color: var(--el-bg-default);
+  border-radius: var(--el-border-radius);
+  corner-shape: var(--el-corner-shape);
+  min-height: 1em;
+  animation: fade 2s infinite;
+}
+
+button {
+  background: var(--el-bg-default);
+  border: none;
+  padding: var(--el-padding);
+  border-radius: var(--el-border-radius);
+  corner-shape: var(--el-corner-shape);
+  cursor: pointer;
+  transition: background-color 0.2s;
+  &.quiet {
+    background: transparent;
+  }
+  &:hover,
+  &.quiet:hover {
+    background-color: var(--el-bg-hover);
+  }
+}
+
+input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  accent-color: var(--el-bg-primary);
+}
+
+a {
+  color: var(--fg-primary);
+  text-decoration: none;
+  font-weight: 600;
+  word-break: break-word;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+@keyframes fade {
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: var(--el-bg-default);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
