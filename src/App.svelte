@@ -5,25 +5,11 @@
   import MomentContent from "./lib/components/MomentContent.svelte";
 
   import { getHistoryByDay, type HistoryByDay } from "./lib/utils/chrome-api";
-  import CardLoading from "./lib/components/CardLoading.svelte";
 
   import { dateTimeFormatOptions } from "./lib/utils/general";
 
   let search: string = $state("");
   let selectedMoments: string[] = $state([]);
-
-  // Cache the resolved data in state
-  let historyData = $state<HistoryByDay | null>(null);
-  let isLoading = $state(false);
-
-  // Fetch data when search changes
-  $effect(() => {
-    isLoading = true;
-    getHistoryByDay(search, true).then((result) => {
-      historyData = result;
-      isLoading = false;
-    });
-  });
 </script>
 
 <header>
@@ -31,12 +17,16 @@
   <Search bind:value={search} />
 </header>
 <main>
-  {#if historyData}
-    <Calendar data={historyData} bind:selectedMoments {isLoading} />
-    <section class="days">
-      {#if selectedMoments.length > 0}
+  <Calendar data={getHistoryByDay(search, true)} bind:selectedMoments />
+  <section class="days">
+    {#if selectedMoments.length > 0}
+      {#await getHistoryByDay(search, true)}
+        <Card loading={true} />
+        <Card loading={true} />
+        <Card loading={true} />
+      {:then historyData}
         {#each selectedMoments as date}
-          {#if historyData[date]?.length > 0}
+          {#if historyData[date] && historyData[date].length > 0}
             <Card>
               <MomentContent {date} items={historyData[date]} />
             </Card>
@@ -52,7 +42,13 @@
             </Card>
           {/if}
         {/each}
-      {:else}
+      {/await}
+    {:else}
+      {#await getHistoryByDay(search, true)}
+        <Card loading={true} />
+        <Card loading={true} />
+        <Card loading={true} />
+      {:then historyData}
         {#each Object.entries(historyData) as [date, items]}
           {#if items.length > 0}
             <Card>
@@ -60,25 +56,15 @@
             </Card>
           {/if}
         {/each}
-      {/if}
-    </section>
-  {:else}
-    <div style="margin-block: 3rem; text-align: center;">
-      Loading calendar...
-    </div>
-    <section class="days">
-      <CardLoading />
-      <CardLoading />
-      <CardLoading />
-    </section>
-  {/if}
+      {:catch error}
+        <p>Something went wrong: {error.message}</p>
+      {/await}
+    {/if}
+  </section>
 </main>
 
 <style>
   header {
-    position: sticky;
-    top: 0;
-    background-color: var(--bg-secondary);
     display: flex;
     align-items: center;
     gap: 1rem;
