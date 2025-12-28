@@ -1,8 +1,8 @@
 :root {
   color-scheme: light dark;
 
-  --hue: 290;
-  --color: oklch(50% 0.1 var(--hue));
+  --hue: 200;
+  --color: oklch(50% 0.3 var(--hue));
   --neutral: oklch(0% 0% var(--hue));
 
   --fg-primary: light-dark(
@@ -53,14 +53,14 @@
   --el-corner-shape: squircle;
 
   --el-outline-color-selected: light-dark(
-    oklch(from var(--neutral) 5% c h),
-    oklch(from var(--neutral) 95% c h)
+    oklch(from var(--color) 5% c h),
+    oklch(from var(--color) 95% c h)
   );
   --el-outline-width-selected: 0.125rem;
   --el-box-shadow-selected: 0 0 0.75rem
     light-dark(
-      oklch(from var(--neutral) 5% c h),
-      oklch(from var(--neutral) 95% c h)
+      oklch(from var(--color) 5% c h),
+      oklch(from var(--color) 95% c h)
     );
 
   --el-padding: 0.5rem 0.75rem;
