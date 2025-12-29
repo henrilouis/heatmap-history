@@ -24,5 +24,5 @@
     <div class="skeleton"></div>
   </div>
 {:else}
-  <article class="card">{@render children()}</article>
+  <article class="card">{@render children?.()}</article>
 {/if}

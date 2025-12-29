@@ -1,3 +1,5 @@
+// Todo: after Jan 7 replace date with temporal API which should be in chrome then
+
 export async function getHistory(filter: string = "") {
   return new Promise<chrome.history.HistoryItem[]>((resolve, reject) => {
     if (!chrome?.history) {
@@ -176,7 +178,7 @@ export async function getHistoryByDayAndHour(
   return grouped;
 }
 
-export async function deleteHistoryUrl(url: string): Promise<void> {
+export async function deleteUrl(url: string): Promise<void> {
   return new Promise((resolve, reject) => {
     if (!chrome?.history) {
       reject(new Error("Chrome history API not available"));

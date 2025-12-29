@@ -1,33 +1,63 @@
 <script lang="ts">
-  import Item from "./Item.svelte";
-  import { dateTimeFormatOptions } from "../utils/general";
-
-  type Props = {
+  let {
+    date,
+    items,
+    deleteHistoryUrl,
+  }: {
     date: string;
     items: chrome.history.HistoryItem[];
-  };
+    deleteHistoryUrl: (url: string) => void;
+  } = $props();
 
-  let { date, items }: Props = $props();
+  import { formatMomentKey } from "../utils/general";
+  // import { blur } from "svelte/transition";
+  // import { flip } from "svelte/animate";
+  // TODO: re-enable animations after implementing virtualization
+  import { getFaviconURL } from "../utils/chrome-api";
+
+  // Safely extract hostname from URL, returns empty string if invalid
+  function getHostname(url: string | undefined): string {
+    if (!url) return "";
+    try {
+      return new URL(url).hostname;
+    } catch {
+      return "";
+    }
+  }
 </script>
 
 <header>
-  <h3>
-    {items[0]?.lastVisitTime
-      ? new Date(items[0].lastVisitTime).toLocaleDateString(
-          undefined,
-          dateTimeFormatOptions
-        )
-      : date}
-  </h3>
+  <h3>{formatMomentKey(date, items[0]?.lastVisitTime)}</h3>
 </header>
 <ol>
-  {#each items as item}
-    <Item
-      time={item.lastVisitTime}
-      title={item.title}
-      url={item.url}
-      domain={new URL(item.url).hostname}
-    />
+  {#each items as item, index (item.id)}
+    {@const hostname = getHostname(item.url)}
+    <!-- <li out:blur={{ duration: 150 }} animate:flip={{ delay: 150,duration: 150 }}> -->
+    <li>
+      <time
+        >{item.lastVisitTime
+          ? new Date(item.lastVisitTime).toLocaleTimeString([], {
+              hour: "numeric",
+              minute: "numeric",
+              hour12: false,
+            })
+          : ""}</time
+      >
+      <img
+        src={hostname ? getFaviconURL(hostname) : ""}
+        alt={hostname ? `Favicon for ${hostname}` : ""}
+      />
+      <div>
+        <a href={item.url}>{item.title}</a>
+        <span class="text-secondary">{hostname}</span>
+      </div>
+      <button
+        class="quiet"
+        onclick={() => {
+          item.url ? deleteHistoryUrl(item.url) : null;
+        }}>Delete</button
+      >
+    </li>
   {/each}
 </ol>
 
@@ -36,5 +66,16 @@
     list-style: none;
     padding: 0;
     margin: 0;
+  }
+  li {
+    font-size: 0.75rem;
+    display: grid;
+    grid-template-columns: 4rem 16px 1fr auto;
+    align-items: center;
+    gap: 0.5rem;
+    padding-block: 0.25rem;
+    &:not(:last-child) {
+      border-bottom: var(--el-border-width) solid var(--el-border-color-default);
+    }
   }
 </style>

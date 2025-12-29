@@ -1,19 +1,16 @@
 <script lang="ts">
-  /* 
-  There should be 2 views: 
-  - Github style calendar view showing days with activity
-  - Github style calendar view showing days/hours with activity
-  */
-
   import type { HistoryByDay } from "../utils/chrome-api";
   import type { Attachment } from "svelte/attachments";
+  import "./calendar.css";
 
   let {
     data,
-    selectedMoments = $bindable(),
+    selectedMoments,
+    onToggleMoment,
   }: {
-    data: Promise<HistoryByDay>;
+    data: HistoryByDay;
     selectedMoments: string[];
+    onToggleMoment: (date: string) => void;
   } = $props();
 
   type WeekData = {
@@ -86,31 +83,17 @@
     return { weeks, months };
   }
 
-  function toggleSelectedMoment(date: string) {
-    const index = selectedMoments.indexOf(date);
-    if (index === -1) {
-      selectedMoments = [...selectedMoments, date].sort().reverse();
-    } else {
-      selectedMoments = selectedMoments.filter((_, i) => i !== index);
-    }
-  }
+  const { weeks, months } = $derived(organizeCalendar(data));
 
   const scrollRight: Attachment = (element) => {
     element.scrollLeft = element.scrollWidth;
   };
 </script>
 
-{#await data}
-  <div id="calendar">
-    <p>Loading calendar...</p>
-  </div>
-{:then historyByDay}
-  {@const { weeks, months } = organizeCalendar(historyByDay)}
-  <div
-    id="calendar"
-    class={selectedMoments.length > 0 ? "filtered" : ""}
-    {@attach scrollRight}
-  >
+{#if weeks.length === 0}
+  <p>No history data available to display the calendar.</p>
+{:else}
+  <div class="calendar" {@attach scrollRight}>
     <table>
       <thead>
         <tr>
@@ -126,12 +109,20 @@
             <th>{week.dayName}</th>
             {#each week.days as day}
               <td
-                tabindex="0"
+                tabindex={day.count > 0 || selectedMoments.includes(day.date)
+                  ? 0
+                  : -1}
                 data-level={day.level}
                 data-date={day.date}
                 data-selected={selectedMoments.includes(day.date)}
                 title="{day.date}: {day.count} visits"
-                onclick={() => toggleSelectedMoment(day.date)}
+                onclick={() => onToggleMoment(day.date)}
+                onkeydown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onToggleMoment(day.date);
+                  }
+                }}
               ></td>
             {/each}
           </tr>
@@ -139,66 +130,11 @@
       </tbody>
     </table>
   </div>
-{:catch error}
-  <div id="calendar">
-    <p>Error loading calendar: {error.message}</p>
-  </div>
-{/await}
+{/if}
 
 <style>
-  #calendar {
-    margin-block: 3rem 4rem;
-    max-width: calc(100vw - 3rem);
-    overflow-y: auto;
-  }
-  table {
-    border-collapse: separate;
-    border-spacing: 0.25rem;
-    margin: auto;
-    table-layout: fixed;
-  }
   td {
     width: 1.5rem;
     height: 1.5rem;
-    min-width: 1.5rem;
-    min-height: 1.5rem;
-    background-color: var(--el-bg-default);
-    border-radius: var(--el-border-radius);
-    corner-shape: var(--el-corner-shape);
-    cursor: pointer;
-    transition: all ease-in-out 50ms;
-    &[data-level="0"]:not([data-selected="true"]) {
-      background-color: var(--heatmap-color-0);
-      pointer-events: none;
-    }
-    &[data-level="1"] {
-      background-color: var(--heatmap-color-1);
-    }
-    &[data-level="2"] {
-      background-color: var(--heatmap-color-2);
-    }
-    &[data-level="3"] {
-      background-color: var(--heatmap-color-3);
-    }
-    &[data-level="4"] {
-      background-color: var(--heatmap-color-4);
-    }
-    &:hover {
-      scale: 1.1;
-    }
-    &:active {
-      scale: 1;
-    }
-    &[data-selected="true"] {
-      outline: var(--el-outline-width-selected) solid
-        var(--el-outline-color-selected);
-      box-shadow: var(--el-box-shadow-selected);
-    }
-    /* Todo: dim all td's when one or more are selected */
-  }
-  th {
-    font-size: 0.75rem;
-    font-weight: 400;
-    text-align: left;
   }
 </style>
