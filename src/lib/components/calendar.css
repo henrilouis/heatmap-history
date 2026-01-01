@@ -56,9 +56,11 @@ th {
   font-weight: 400;
   text-align: left;
 }
+thead th {
+  max-width: 0.75rem;
+}
 thead tr.days th {
   font-size: 0.625rem;
-  max-width: 0.75rem;
 }
 tbody th {
   font-size: 0.625rem;
